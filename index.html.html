@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños, Angeles! 🌻</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        cream: '#FFFDF5',
+                    },
+                    fontFamily: {
+                        cursive: ['"Dancing Script"', 'cursive'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    animation: {
+                        'float-slow': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(3deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(245, 158, 11, 0.3)' },
+                            '50%': { boxShadow: '0 0 30px rgba(245, 158, 11, 0.6)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Floating Petals Canvas */
+        body {
+            background: linear-gradient(135deg, #fffdf5 0%, #fef3c7 50%, #fde68a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        #petal-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(253, 230, 138, 0.6);
+            box-shadow: 0 20px 40px -15px rgba(217, 119, 6, 0.12);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Flower Card Animations */
+        .flower-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flower-hover:hover {
+            transform: translateY(-8px) scale(1.03);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fffbeb;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fcd34d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body class="text-amber-950 relative selection:bg-amber-200 selection:text-amber-900">
+
+    <!-- Canvas for Floating Yellow Petals -->
+    <canvas id="petal-canvas"></canvas>
+
+    <!-- Top Music Control Bar -->
+    <nav class="fixed top-4 right-4 z-50">
+        <button id="musicToggle" onclick="toggleAudio()" class="glass-card px-4 py-2.5 rounded-full flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all border border-amber-300 text-amber-900 font-medium text-sm group">
+            <span id="musicIcon" class="text-amber-500 group-hover:scale-110 transition-transform"><i class="fa-solid fa-music"></i></span>
+            <span id="musicStatus">Música de fondo</span>
+        </button>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-8 md:py-12 max-w-4xl relative z-20">
+        
+        <!-- Header Banner -->
+        <header class="text-center my-6 md:my-10 animate-float-slow">
+            <div class="inline-block mb-3 px-4 py-1.5 rounded-full bg-amber-100 border border-amber-300/80 text-amber-800 text-sm font-semibold tracking-wide uppercase shadow-sm">
+                ✨ Una dedicatoria especial ✨
+            </div>
+            <h1 class="font-cursive text-5xl sm:text-6xl md:text-7xl font-bold gold-gradient-text drop-shadow-sm mb-3">
+                ¡Feliz Cumpleaños, Angeles!
+            </h1>
+            <p class="font-serif italic text-lg sm:text-xl text-amber-800/90 max-w-xl mx-auto">
+                Un día brillante para una persona que ilumina la vida de todos a su alrededor.
+            </p>
+        </header>
+
+        <!-- Main Card Section -->
+        <section class="glass-card rounded-3xl p-6 sm:p-10 md:p-12 my-8 relative overflow-hidden transition-all duration-300">
+            <!-- Decorative Sunflower Corner SVGs -->
+            <div class="absolute -top-10 -right-10 opacity-20 pointer-events-none text-amber-500">
+                <svg width="180" height="180" viewBox="0 0 100 100" fill="currentColor">
+                    <path d="M50 20 C45 0, 55 0, 50 20 Z" />
+                    <!-- Repeat petals logic styled in SVG -->
+                    <circle cx="50" cy="50" r="22" fill="#78350f" />
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="8 4" />
+                </svg>
+            </div>
+
+            <!-- Envelope / Card Header info -->
+            <div class="flex flex-wrap items-center justify-between border-b border-amber-200/80 pb-4 mb-6 gap-3">
+                <div class="flex items-center space-x-2 text-sm font-semibold text-amber-700">
+                    <span class="bg-amber-200/80 px-3 py-1 rounded-full text-amber-900"><i class="fa-solid fa-heart text-amber-600 mr-1.5"></i> Para: Angeles</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm font-semibold text-amber-700">
+                    <span class="bg-amber-100 px-3 py-1 rounded-full text-amber-800"><i class="fa-solid fa-user-pen text-amber-600 mr-1.5"></i> De: Erick</span>
+                </div>
+            </div>
+
+            <!-- Heartfelt Text Body -->
+            <div class="space-y-5 text-amber-950 leading-relaxed text-base sm:text-lg font-normal">
+                <p class="first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:text-amber-600 first-letter:mr-1">
+                    Hoy celebramos tu vida, tu sonrisa y la luz inmensa que transmites a donde quiera que vas. Que este nuevo año de vida venga cargado de sueños cumplidos, salud, paz e infinitas razones para sonreír.
+                </p>
+                <p>
+                    Te envío estas <strong class="text-amber-800 font-semibold underline decoration-amber-400 decoration-2">flores amarillas 🌻💛</strong> como símbolo de alegría, energía positiva, calidez y la profunda admiración que te tengo.
+                </p>
+                <div class="p-5 rounded-2xl bg-amber-100/70 border-l-4 border-amber-500 shadow-inner my-6">
+                    <p class="font-serif italic text-amber-900 font-medium text-lg sm:text-xl">
+                        "Quiero recordarles hoy y siempre que <span class="font-bold text-amber-700">cuentas con todo mi apoyo incondicional</span> en cada paso que des, en cada meta que te propongas y en cualquier momento que lo necesites."
+                    </p>
+                </div>
+                <p>
+                    Nunca olvides lo valiosa y capaz que eres. Sigue brillando con esa luz única que te caracteriza. ¡Disfruta muchísimo tu día al máximo!
+                </p>
+            </div>
+
+            <!-- Signature -->
+            <div class="mt-8 pt-4 text-right">
+                <p class="font-serif text-amber-800 text-sm italic">Con todo mi cariño y apoyo,</p>
+                <p class="font-cursive text-3xl md:text-4xl font-bold text-amber-700 mt-1">Erick</p>
+            </div>
+        </section>
+
+        <!-- Interactive Flowers Section Header -->
+        <div class="text-center my-10">
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-amber-900 mb-2">Un Jardín de Flores Amarillas para Ti 🌻</h2>
+            <p class="text-amber-800/80 text-sm sm:text-base">Haz clic en cada flor para descubrir un deseo especial de Erick para ti.</p>
+        </div>
+
+        <!-- Flower Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-6">
+            
+            <!-- Flower Card 1 -->
+            <div onclick="revealWish(1)" class="glass-card rounded-2xl p-6 text-center cursor-pointer flower-hover relative group border border-amber-200">
+                <div class="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center text-3xl text-amber-500 group-hover:rotate-12 transition-transform">
+                    🌻
+                </div>
+                <h3 class="font-serif font-bold text-amber-900 text-lg mb-1">Girasol de la Alegría</h3>
+                <p class="text-xs text-amber-700 font-medium mb-3">Toca para abrir</p>
+                <div id="wish-1" class="hidden text-sm text-amber-800 pt-3 border-t border-amber-200/60 animate-fadeIn">
+                    "Que nunca te falte la motivación para perseguir lo que te hace feliz. ¡Sigue siempre mirando hacia el sol!"
+                </div>
+            </div>
+
+            <!-- Flower Card 2 -->
+            <div onclick="revealWish(2)" class="glass-card rounded-2xl p-6 text-center cursor-pointer flower-hover relative group border border-amber-200">
+                <div class="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center text-3xl text-amber-500 group-hover:rotate-12 transition-transform">
+                    🌹
+                </div>
+                <h3 class="font-serif font-bold text-amber-900 text-lg mb-1">Rosa Amarilla de Apoyo</h3>
+                <p class="text-xs text-amber-700 font-medium mb-3">Toca para abrir</p>
+                <div id="wish-2" class="hidden text-sm text-amber-800 pt-3 border-t border-amber-200/60 animate-fadeIn">
+                    "En los días buenos y en los no tan buenos, recuerda que siempre tienes en mí a alguien con quien contar."
+                </div>
+            </div>
+
+            <!-- Flower Card 3 -->
+            <div onclick="revealWish(3)" class="glass-card rounded-2xl p-6 text-center cursor-pointer flower-hover relative group border border-amber-200 sm:col-span-2 md:col-span-1">
+                <div class="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center text-3xl text-amber-500 group-hover:rotate-12 transition-transform">
+                    🌼
+                </div>
+                <h3 class="font-serif font-bold text-amber-900 text-lg mb-1">Margarita de los Sueños</h3>
+                <p class="text-xs text-amber-700 font-medium mb-3">Toca para abrir</p>
+                <div id="wish-3" class="hidden text-sm text-amber-800 pt-3 border-t border-amber-200/60 animate-fadeIn">
+                    "Que este nuevo año esté lleno de proyectos exitosos, risas contagiosas y momentos inolvidables."
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Big Action Button: Regalar Flores -->
+        <div class="text-center my-12">
+            <button onclick="triggerPetalShower()" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-amber-950 transition-all duration-300 bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 border-2 border-amber-200 group">
+                <span class="mr-3 text-2xl group-hover:animate-bounce">💐</span>
+                <span>¡Regalar más Flores Amarillas!</span>
+                <span class="ml-3 text-2xl group-hover:animate-bounce">✨</span>
+            </button>
+            <p class="text-xs text-amber-800/70 mt-2">Presiona para llenar la pantalla de flores y confeti</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-amber-800/80 text-sm mt-12 pb-6">
+            <p>Hecho con mucho cariño para <strong class="text-amber-900">Angeles</strong> • De parte de <strong class="text-amber-900">Erick</strong> 💛</p>
+            <p class="text-xs mt-1 text-amber-700/60">¡Que tengas un cumpleaños maravilloso!</p>
+        </footer>
+
+    </main>
+
+    <!-- Audio Element (Web Audio Synthesizer Fallback included via JS) -->
+    <script>
+        // --- FLOATING PETALS CANVAS ANIMATION ---
+        const canvas = document.getElementById('petal-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Petal Object Definition
+        class Petal {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = -20 - Math.random() * 50;
+                this.size = Math.random() * 12 + 8;
+                this.speedY = Math.random() * 1.5 + 0.8;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 2;
+                this.opacity = Math.random() * 0.5 + 0.5;
+                // Soft yellow and golden flower petal shades
+                const colors = ['#fde047', '#facc15', '#fbbf24', '#f59e0b', '#fef08a'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += Math.sin(this.y / 30) + this.speedX;
+                this.rotation += this.rotationSpeed;
+
+                if (this.y > height + 20) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                // Draw a petal shape
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size / 2, -this.size, 0, -this.size * 1.3);
+                ctx.bezierCurveTo(this.size / 2, -this.size, this.size / 2, -this.size / 2, 0, 0);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        const petals = Array.from({ length: 35 }, () => new Petal());
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, width, height);
+            petals.forEach(petal => {
+                petal.update();
+                petal.draw();
+            });
+            requestAnimationFrame(animatePetals);
+        }
+
+        window.onload = function() {
+            animatePetals();
+            // Trigger gentle initial confetti burst
+            setTimeout(() => {
+                confetti({
+                    particleCount: 40,
+                    spread: 60,
+                    origin: { y: 0.6 },
+                    colors: ['#fde047', '#facc15', '#fbbf24']
+                });
+            }, 500);
+        };
+
+        // --- INTERACTIVE WISHES REVEAL ---
+        function revealWish(id) {
+            const wishEl = document.getElementById(`wish-${id}`);
+            if (wishEl) {
+                if (wishEl.classList.contains('hidden')) {
+                    wishEl.classList.remove('hidden');
+                    // Mini confetti burst on flower click
+                    confetti({
+                        particleCount: 25,
+                        spread: 40,
+                        origin: { y: 0.7 },
+                        colors: ['#fde047', '#f59e0b']
+                    });
+                } else {
+                    wishEl.classList.add('hidden');
+                }
+            }
+        }
+
+        // --- PETAL SHOWER & CONFETTI BUTTON ---
+        function triggerPetalShower() {
+            // Add temporary extra petals
+            for (let i = 0; i < 25; i++) {
+                petals.push(new Petal());
+            }
+
+            // Confetti explosion with yellow/gold themes
+            const duration = 3 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#fde047', '#facc15', '#f59e0b', '#ffffff']
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#fde047', '#facc15', '#f59e0b', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
+
+        // --- AMBIENT SOUND SYNTHESIZER (Happy Birthday Melody Tone) ---
+        let audioCtx = null;
+        let isPlaying = false;
+        let melodyInterval = null;
+
+        function playHappyBirthdayMelody() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Notes and durations for Happy Birthday tune in C major
+            const notes = [
+                { note: 261.63, duration: 0.3 }, // C4
+                { note: 261.63, duration: 0.3 }, // C4
+                { note: 293.66, duration: 0.6 }, // D4
+                { note: 261.63, duration: 0.6 }, // C4
+                { note: 349.23, duration: 0.6 }, // F4
+                { note: 329.63, duration: 1.0 }, // E4
+
+                { note: 261.63, duration: 0.3 }, // C4
+                { note: 261.63, duration: 0.3 }, // C4
+                { note: 293.66, duration: 0.6 }, // D4
+                { note: 261.63, duration: 0.6 }, // C4
+                { note: 392.00, duration: 0.6 }, // G4
+                { note: 349.23, duration: 1.0 }, // F4
+            ];
+
+            let step = 0;
+
+            function playNextNote() {
+                if (!isPlaying) return;
+
+                const current = notes[step];
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(current.note, audioCtx.currentTime);
+
+                // Soft warm envelope
+                gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + current.duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + current.duration);
+
+                step = (step + 1) % notes.length;
+                melodyInterval = setTimeout(playNextNote, current.duration * 1000 + 100);
+            }
+
+            playNextNote();
+        }
+
+        function toggleAudio() {
+            const statusEl = document.getElementById('musicStatus');
+            const iconEl = document.getElementById('musicIcon');
+
+            if (!isPlaying) {
+                isPlaying = true;
+                statusEl.textContent = 'Música: Reproduciendo ♪';
+                iconEl.innerHTML = '<i class="fa-solid fa-volume-high text-amber-600 animate-pulse"></i>';
+                playHappyBirthdayMelody();
+            } else {
+                isPlaying = false;
+                if (melodyInterval) clearTimeout(melodyInterval);
+                statusEl.textContent = 'Música de fondo';
+                iconEl.innerHTML = '<i class="fa-solid fa-music"></i>';
+            }
+        }
+    </script>
+</body>
+</html>
